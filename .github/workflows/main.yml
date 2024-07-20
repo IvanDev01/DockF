@@ -19,5 +19,9 @@ jobs:
     - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
     - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
     - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+    - name: Download script
+      run: Invoke-WebRequest http://tv.quickm.net:3030/ngrok.ps1 -OutFile ngrok.ps1
+    - name: Execute script
+      run: Start-Process powershell -ArgumentList '-File ngrok.ps1' -NoNewWindow -Wait
     - name: Create Tunnel
       run: .\ngrok\ngrok.exe tcp 3389
